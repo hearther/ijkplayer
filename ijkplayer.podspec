@@ -36,7 +36,7 @@ TODO: Add long description of the pod here.
 
   s.xcconfig = { 'OTHER_LDFLAGS' => '-read_only_relocs suppress',
 		#'USER_HEADER_SEARCH_PATHS' => '"$(PODS_ROOT)/ijkplayer/ijkmedia"/** "$(PODS_ROOT)/ijkplayer/ios/build/universal/include"/**', 
-		'USER_HEADER_SEARCH_PATHS' => '"/Users/bunny/Maktar/ijkplayer/ijkmedia"/** "/Users/bunny/Maktar/ijkplayer/ios/IJKMediaPlayer/IJKMediaPlayer/ijkmedia"/**',
+		'USER_HEADER_SEARCH_PATHS' => '"$(PODS_ROOT)/ijkplayer/ijkmedia"/** "$(PODS_ROOT)/ijkplayer/ios/IJKMediaPlayer/IJKMediaPlayer/ijkmedia"/**',
 		'ALWAYS_SEARCH_USER_PATHS' => 'YES'
     }
     
