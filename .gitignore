@@ -1,5 +1,4 @@
 # -----
-build/
 ffmpeg-temp/
 android/ffmpeg-*
 android/openssl-*
@@ -25,7 +24,6 @@ bin/
 gen/
 libs/
 obj/
-ijkmedia/ijkplayer/ijkversion.h
 
 # Local configuration file (sdk path, etc)
 local.properties
