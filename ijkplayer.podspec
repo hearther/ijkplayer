@@ -29,7 +29,7 @@ TODO: Add long description of the pod here.
   s.requires_arc = false
   s.requires_arc = 'ios/IJKMediaPlayer/IJKMediaPlayer/*'  
    
-  s.source_files = 'ios/IJKMediaPlayer/IJKMediaPlayer/**/*.{h,m,c,pch}', 'ijkmedia/**/*.{h,m,c,pch}', 'ios/build/universal/**/*'
+  s.source_files = 'ios/IJKMediaPlayer/IJKMediaPlayer/**/*.{h,m,c,pch}', 'ijkmedia/**/*.{h,m,c,pch}'
   s.exclude_files = 'ijkmedia/ijkj4a/**/*', 'ijkmedia/ijkplayer/android/**/*', 'ijkmedia/ijkplayer/Android.mk', 'ijkmedia/ijksdl/android/**/*', 'ijkmedia/ijksdl/Android.mk'
   s.public_header_files = 'ios/IJKMediaPlayer/IJKMediaPlayer/*.h'
 
@@ -42,6 +42,7 @@ TODO: Add long description of the pod here.
     
   s.default_subspec = 'precompiled'
   s.subspec 'precompiled' do |ss|
+	  	ss.source_files = 'ios/build/universal/**/*'
     	ss.public_header_files = 'ios/build/universal/include/**/*.h'
     	ss.header_mappings_dir = 'ios/build/universal/include'
     	ss.vendored_libraries  = 'ios/build/universal/lib/*.a'
