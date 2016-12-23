@@ -26,12 +26,20 @@ TODO: Add long description of the pod here.
   s.source           = { :git => 'https://github.com/hearther/ijkplayer.git', :tag => s.version.to_s }
 
   s.ios.deployment_target = '8.0'
-  s.requires_arc = false
-  s.requires_arc = 'ios/IJKMediaPlayer/IJKMediaPlayer/*'  
    
   s.source_files = 'ios/IJKMediaPlayer/IJKMediaPlayer/**/*.{h,m,c,pch}', 'ios/IJKMediaPlayer/*.{h,m,c,pch}', 'ijkmedia/**/*.{h,m,c,pch}'
   s.exclude_files = 'ijkmedia/ijkj4a/**/*', 'ijkmedia/ijkplayer/android/**/*', 'ijkmedia/ijkplayer/Android.mk', 'ijkmedia/ijksdl/android/**/*', 'ijkmedia/ijksdl/Android.mk'
   s.public_header_files = 'ios/IJKMediaPlayer/IJKMediaPlayer/*.h'
+
+  s.requires_arc = false
+  s.requires_arc = 'ios/IJKMediaPlayer/IJKMediaPlayer/**/*.{m,c}', 'ios/IJKMediaPlayer/*.{m,c}', 'ijkmedia/**/*.{c,m}'
+
+s.default_subspec = 'no-arc'
+  
+  s.subspec 'no-arc' do |sp|
+    sp.source_files = 'ios/IJKMediaPlayer/IJKMediaPlayer/ijkmedia/ijkplayer/ios/ijkplayer_ios.m', 'ios/IJKMediaPlayer/IJKMediaPlayer/ijkmedia/ijksdl/ios/ijksdl_vout_ios_gles2.m', 'ios/IJKMediaPlayer/IJKMediaPlayer/ijkmedia/ijksdl/ios/ijksdl_aout_ios_audiounit.m'
+    sp.requires_arc = false
+  end
 
 
   s.xcconfig = { 'OTHER_LDFLAGS' => '-read_only_relocs suppress',
@@ -39,8 +47,8 @@ TODO: Add long description of the pod here.
 		'USER_HEADER_SEARCH_PATHS' => '"$(PODS_ROOT)/ijkplayer/ijkmedia"/** "$(PODS_ROOT)/ijkplayer/ios/IJKMediaPlayer/IJKMediaPlayer/ijkmedia"/**',
 		'ALWAYS_SEARCH_USER_PATHS' => 'YES'
     }
+  
     
-  s.default_subspec = 'precompiled'
   s.subspec 'precompiled' do |ss|
 	  	ss.source_files = 'ios/build/universal/**/*'
     	ss.public_header_files = 'ios/build/universal/include/**/*.h'
