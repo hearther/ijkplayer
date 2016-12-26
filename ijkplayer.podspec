@@ -34,7 +34,7 @@ TODO: Add long description of the pod here.
   s.requires_arc = false
   s.requires_arc = 'ios/IJKMediaPlayer/IJKMediaPlayer/**/*.{m,c}', 'ios/IJKMediaPlayer/*.{m,c}', 'ijkmedia/**/*.{c,m}'
 
-s.default_subspec = 'no-arc'
+  s.default_subspec = 'no-arc'
   
   s.subspec 'no-arc' do |sp|
     sp.source_files = 'ios/IJKMediaPlayer/IJKMediaPlayer/ijkmedia/ijkplayer/ios/ijkplayer_ios.m', 'ios/IJKMediaPlayer/IJKMediaPlayer/ijkmedia/ijksdl/ios/ijksdl_vout_ios_gles2.m', 'ios/IJKMediaPlayer/IJKMediaPlayer/ijkmedia/ijksdl/ios/ijksdl_aout_ios_audiounit.m'
@@ -46,17 +46,6 @@ s.default_subspec = 'no-arc'
 		#'USER_HEADER_SEARCH_PATHS' => '"$(PODS_ROOT)/ijkplayer/ijkmedia"/** "$(PODS_ROOT)/ijkplayer/ios/build/universal/include"/**', 
 		'USER_HEADER_SEARCH_PATHS' => '"$(PODS_ROOT)/ijkplayer/ijkmedia"/** "$(PODS_ROOT)/ijkplayer/ios/IJKMediaPlayer/IJKMediaPlayer/ijkmedia"/**',
 		'ALWAYS_SEARCH_USER_PATHS' => 'YES'
-    }
-  
-    
-  s.subspec 'precompiled' do |ss|	  	
-	  	ss.source = :http => 'https://github.com/hearther/ijkplayer/releases/download/k0.4.5.1X264_AACk0.4.5.1X264_AAC_binary_release/universal.zip"
-	  	ss.source_files = 'universal/**/*'
-    	ss.public_header_files = 'universal/include/**/*.h'
-    	ss.header_mappings_dir = 'universal/include'
-    	ss.vendored_libraries  = 'universal/lib/**/*.a'
-    	ss.libraries = 'x264', 'avcodec', 'avfilter', 'avformat', 'avutil', 'swresample', 'swscale', 'iconv', 'z', 'bz2', 'fdk-aac'
-    	ss.frameworks = 'VideoToolbox'
-  end
+  }
     
 end
