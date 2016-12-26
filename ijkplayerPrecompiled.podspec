@@ -26,7 +26,8 @@ TODO: Add long description of the pod here.
   s.requires_arc = false
   s.ios.deployment_target = '8.0'
 
-  s.source = { :type => "zip", :http => 'https://dl.dropboxusercontent.com/u/12420990/universal.zip', :flatten => true }  
+  #s.source = { :type => "zip", :http => 'http://github.com/hearther/ijkplayer/releases/download/k0.4.5.1X264_AACk0.4.5.1X264_AAC_binary_release/universal.zip', :flatten => true }  
+  s.source = { :type => "zip", :http => 'http://localhost/universal.zip', :flatten => true }  
   s.source_files = 'universal/**/*.a'
   s.public_header_files = 'universal/include/**/*.h'
   s.header_mappings_dir = 'universal/include'
