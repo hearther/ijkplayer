@@ -49,11 +49,12 @@ s.default_subspec = 'no-arc'
     }
   
     
-  s.subspec 'precompiled' do |ss|
-	  	ss.source_files = 'ios/build/universal/**/*'
-    	ss.public_header_files = 'ios/build/universal/include/**/*.h'
-    	ss.header_mappings_dir = 'ios/build/universal/include'
-    	ss.vendored_libraries  = 'ios/build/universal/lib/**/*.a'
+  s.subspec 'precompiled' do |ss|	  	
+	  	ss.source = :http => 'https://github.com/hearther/ijkplayer/releases/download/k0.4.5.1X264_AACk0.4.5.1X264_AAC_binary_release/universal.zip"
+	  	ss.source_files = 'universal/**/*'
+    	ss.public_header_files = 'universal/include/**/*.h'
+    	ss.header_mappings_dir = 'universal/include'
+    	ss.vendored_libraries  = 'universal/lib/**/*.a'
     	ss.libraries = 'x264', 'avcodec', 'avfilter', 'avformat', 'avutil', 'swresample', 'swscale', 'iconv', 'z', 'bz2', 'fdk-aac'
     	ss.frameworks = 'VideoToolbox'
   end
