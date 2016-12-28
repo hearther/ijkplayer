@@ -1076,6 +1076,20 @@ inline static void fillMetaInternal(NSMutableDictionary *meta, IjkMediaMeta *raw
              postNotificationName:IJKMPMoviePlayerPlaybackStateDidChangeNotification
              object:self];
             break;
+        case FFP_MSG_TIMED_TEXT:
+            if (avmsg->obj)
+            {
+                char *tmp = avmsg->obj;
+                NSString *tmpStr = [NSString stringWithCString:tmp
+                                                   encoding:NSUTF8StringEncoding];
+                
+                [_glView setTimedText:tmpStr];
+                NSLog(@"FFP_MSG_TIMED_TEXT  %@", tmpStr);
+            }
+            else {
+                [_glView setTimedText:@""];
+            }
+            break;
         case FFP_MSG_SEEK_COMPLETE: {
             NSLog(@"FFP_MSG_SEEK_COMPLETE:\n");
             [[NSNotificationCenter defaultCenter]
