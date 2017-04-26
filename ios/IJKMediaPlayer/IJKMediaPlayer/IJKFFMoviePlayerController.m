@@ -33,7 +33,7 @@
 #import "ijkioapplication.h"
 #include "string.h"
 
-static const char *kIJKFFRequiredFFmpegVersion = "3f19c25412bfe91da9f41037999498ba91aee726";
+static const char *kIJKFFRequiredFFmpegVersion = "ff3.3--ijk0.8.0--20170426--001";
 
 // It means you didn't call shutdown if you found this object leaked.
 @interface IJKWeakHolder : NSObject
@@ -156,7 +156,7 @@ void IJKFFIOStatCompleteRegister(void (*cb)(const char *url,
 
     // Detect if URL is file path and return proper string for it
     NSString *aUrlString = [aUrl isFileURL] ? [aUrl path] : [aUrl absoluteString];
-    aUrlString = [aUrlString stringByRemovingPercentEncoding];
+
     return [self initWithContentURLString:aUrlString
                               withOptions:options];
 }
@@ -201,13 +201,10 @@ void IJKFFIOStatCompleteRegister(void (*cb)(const char *url,
         ijkmp_set_ijkio_inject_opaque(_mediaPlayer, (__bridge_retained void *)weakHolder);
         ijkmp_set_option_int(_mediaPlayer, IJKMP_OPT_CATEGORY_PLAYER, "start-on-prepared", _shouldAutoplay ? 1 : 0);
 
-        _view = [[UIView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-        _view.autoresizesSubviews = YES;
         // init video sink
         _glView = [[IJKSDLGLView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-        _glView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
         _glView.shouldShowHudView = NO;
-        [_view addSubview:_glView];
+        _view   = _glView;
         [_glView setHudValue:nil forKey:@"scheme"];
         [_glView setHudValue:nil forKey:@"host"];
         [_glView setHudValue:nil forKey:@"path"];
@@ -620,16 +617,16 @@ inline static int getPlayerOption(IJKFFOptionCategory category)
     IJKMPMovieScalingMode newScalingMode = aScalingMode;
     switch (aScalingMode) {
         case IJKMPMovieScalingModeNone:
-            [_glView setContentMode:UIViewContentModeCenter];
+            [_view setContentMode:UIViewContentModeCenter];
             break;
         case IJKMPMovieScalingModeAspectFit:
-            [_glView setContentMode:UIViewContentModeScaleAspectFit];
+            [_view setContentMode:UIViewContentModeScaleAspectFit];
             break;
         case IJKMPMovieScalingModeAspectFill:
-            [_glView setContentMode:UIViewContentModeScaleAspectFill];
+            [_view setContentMode:UIViewContentModeScaleAspectFill];
             break;
         case IJKMPMovieScalingModeFill:
-            [_glView setContentMode:UIViewContentModeScaleToFill];
+            [_view setContentMode:UIViewContentModeScaleToFill];
             break;
         default:
             newScalingMode = _scalingMode;
@@ -646,8 +643,8 @@ inline static int getPlayerOption(IJKFFOptionCategory category)
 
 - (UIImage *)thumbnailImageAtCurrentTime
 {
-    if ([_glView isKindOfClass:[IJKSDLGLView class]]) {
-        IJKSDLGLView *glView = (IJKSDLGLView *)_glView;
+    if ([_view isKindOfClass:[IJKSDLGLView class]]) {
+        IJKSDLGLView *glView = (IJKSDLGLView *)_view;
         return [glView snapshot];
     }
 
@@ -891,15 +888,13 @@ inline static void fillMetaInternal(NSMutableDictionary *meta, IjkMediaMeta *raw
         [meta removeObjectForKey:key];
     }
 }
-#define DEGREES_TO_RADIANS(x) (M_PI * (x) / 180.0)
+
 - (void)postEvent: (IJKFFMoviePlayerMessage *)msg
 {
     if (!msg)
         return;
 
     AVMessage *avmsg = &msg->_msg;
-    float degree = 0;
-    CGRect newGlFrame = CGRectZero;
     switch (avmsg->what) {
         case FFP_MSG_FLUSH:
             break;
@@ -1143,51 +1138,6 @@ inline static void fillMetaInternal(NSMutableDictionary *meta, IjkMediaMeta *raw
              userInfo:@{IJKMPMoviePlayerDidAccurateSeekCompleteCurPos: @(avmsg->arg1)}];
             break;
         }
-        case FFP_MSG_VIDEO_ROTATION_CHANGED:
-        {            
-            degree = avmsg->arg1;
-            NSLog(@"FFP_MSG_VIDEO_ROTATION_CHANGED: degree %f\n", degree);
-            if (degree == 0||
-                degree == 180||
-                degree == 360)
-            {
-                newGlFrame = CGRectMake(0, 0,
-                                        CGRectGetWidth(_view.frame),
-                                        CGRectGetHeight(_view.frame));
-            }
-            else if(degree == 90||
-                    degree == 270)
-            {
-                newGlFrame = CGRectMake(0, 0,
-                                        CGRectGetHeight(_view.frame),
-                                        CGRectGetWidth(_view.frame));
-            }
-            else {
-                NSLog(@"unspported degree");
-            }
-            if (!CGRectIsNull(newGlFrame))
-            {
-                _glView.bounds = newGlFrame;
-                _glView.transform = CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(degree));
-                
-            }
-            
-            break;
-        }
-            
-        case FFP_MSG_ARTWORK:{
-            NSLog(@"FFP_MSG_ARTWORK:\n");
-            
-            NSData *data = [NSData dataWithBytes:avmsg->obj
-                                          length:avmsg->arg1];
-            UIImage *tmp = [UIImage imageWithData:data];
-            
-            [[NSNotificationCenter defaultCenter]
-             postNotificationName:IJKMPMoviePlayerArtworkKey
-             object:self userInfo:@{@"artwork":tmp}];
-            break;
-        }
-            break;
         default:
             // NSLog(@"unknown FFP_MSG_xxx(%d)\n", avmsg->what);
             break;
