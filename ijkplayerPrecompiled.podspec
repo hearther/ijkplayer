@@ -26,7 +26,7 @@ TODO: Add long description of the pod here.
   s.requires_arc = false
   s.ios.deployment_target = '8.0'
 
-  s.source = { :type => "zip", :http => 'http://github.com/hearther/ijkplayer/releases/download/k0.4.5.1X264_AACk0.4.5.1X264_AAC_binary_release/universal.zip', :flatten => true }  
+  s.source = { :type => "zip", :http => 'http://github.com/hearther/ijkplayer/releases/download/k0.4.5.1X264_AACk0.4.5.1X264_AAC_binary_release_v1.0/universal.zip', :flatten => true }  
   #s.source = { :type => "zip", :http => 'http://localhost/universal.zip', :flatten => true }  
   s.source_files = 'universal/**/*.a'
   s.public_header_files = 'universal/include/**/*.h'
@@ -35,6 +35,6 @@ TODO: Add long description of the pod here.
   s.libraries = 'x264', 'avcodec', 'avfilter', 'avformat', 'avutil', 'swresample', 'swscale', 'iconv', 'z', 'bz2', 'fdk-aac'
   s.frameworks = 'VideoToolbox', 'Foundation'
   s.xcconfig = { 
-  'OTHER_LDFLAGS' => '-read_only_relocs suppress',
+  #'OTHER_LDFLAGS' => '-read_only_relocs suppress',
   'ENABLE_BITCODE' => 'NO' }
 end
