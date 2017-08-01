@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'ijkplayerPrecompiled'
-  s.version          = '0.1.0'
+  s.version          = '0.1.1'
   s.summary          = 'A short description of ijkplayer.'
 
 # This description is used to generate tags and improve search results.
@@ -28,13 +28,13 @@ TODO: Add long description of the pod here.
 
   s.source = { :type => "zip", :http => 'http://github.com/hearther/ijkplayer/releases/download/k0.4.5.1X264_AACk0.4.5.1X264_AAC_binary_release_v1.0/universal.zip', :flatten => true }  
   #s.source = { :type => "zip", :http => 'http://localhost/universal.zip', :flatten => true }  
-  s.source_files = 'universal/**/*.a'
+  s.source_files = 'universal/**/*'
   s.public_header_files = 'universal/include/**/*.h'
   s.header_mappings_dir = 'universal/include'
   s.vendored_libraries  = 'universal/lib/**/*.a'
   s.libraries = 'x264', 'avcodec', 'avfilter', 'avformat', 'avutil', 'swresample', 'swscale', 'iconv', 'z', 'bz2', 'fdk-aac'
   s.frameworks = 'VideoToolbox', 'Foundation'
   s.xcconfig = { 
-  #'OTHER_LDFLAGS' => '-read_only_relocs suppress',
+  'OTHER_LDFLAGS' => '-read_only_relocs suppress',
   'ENABLE_BITCODE' => 'NO' }
 end
