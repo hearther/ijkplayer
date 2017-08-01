@@ -18,7 +18,7 @@
 # IJK_FFMPEG_UPSTREAM=git://git.videolan.org/ffmpeg.git
 IJK_FFMPEG_UPSTREAM=https://github.com/hearther/FFmpeg.git
 IJK_FFMPEG_FORK=https://github.com/hearther/FFmpeg.git
-IJK_FFMPEG_COMMIT=99fd4b8d8f854c83737e5be0089081251e60ba9d
+IJK_FFMPEG_COMMIT=d0acaa4747d7384ad5183dd9a339a45a5dec4d9f
 IJK_FFMPEG_LOCAL_REPO=extra/ffmpeg
 
 IJK_GASP_UPSTREAM=https://github.com/Bilibili/gas-preprocessor.git
