@@ -991,7 +991,10 @@ static int message_loop(void *arg)
     MPTRACE("%s\n", __func__);
 
     JNIEnv *env = NULL;
-    (*g_jvm)->AttachCurrentThread(g_jvm, &env, NULL );
+    if (JNI_OK != SDL_JNI_SetupThreadEnv(&env)) {
+        ALOGE("%s: SetupThreadEnv failed\n", __func__);
+        return -1;
+    }
 
     IjkMediaPlayer *mp = (IjkMediaPlayer*) arg;
     JNI_CHECK_GOTO(mp, env, NULL, "mpjni: native_message_loop: null mp", LABEL_RETURN);
@@ -1000,7 +1003,6 @@ static int message_loop(void *arg)
 
 LABEL_RETURN:
     ijkmp_dec_ref_p(&mp);
-    (*g_jvm)->DetachCurrentThread(g_jvm);
 
     MPTRACE("message_loop exit");
     return 0;
@@ -1062,6 +1064,18 @@ IjkMediaPlayer_native_setLogLevel(JNIEnv *env, jclass clazz, jint level)
     ALOGD("moncleanup\n");
 }
 
+static void
+IjkMediaPlayer_injectCacheNode(JNIEnv *env, jobject thiz, jint index, jlong file_logical_pos, jlong physical_pos, jlong cache_size, jlong file_size) {
+    IjkMediaPlayer *mp = jni_get_media_player(env, thiz);
+    JNI_CHECK_GOTO(mp, env, NULL, "mpjni: injectCacheNode: null mp", LABEL_RETURN);
+    ijkmp_set_ijkio_inject_node(mp, index, file_logical_pos, physical_pos, cache_size, file_size);
+
+LABEL_RETURN:
+    ijkmp_dec_ref_p(&mp);
+    return;
+}
+
+
 
 
 
@@ -1113,6 +1127,7 @@ static JNINativeMethod g_methods[] = {
     { "native_profileEnd",      "()V",                      (void *) IjkMediaPlayer_native_profileEnd },
 
     { "native_setLogLevel",     "(I)V",                     (void *) IjkMediaPlayer_native_setLogLevel },
+    { "_injectCacheNode",       "(IJJJJ)V",                 (void *) IjkMediaPlayer_injectCacheNode },
 };
 
 JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved)

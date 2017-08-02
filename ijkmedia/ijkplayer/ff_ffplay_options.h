@@ -68,6 +68,8 @@ static const AVOption ffp_context_options[] = {
     // TODO: ss
     { "nodisp",                         "disable graphical display",
         OPTION_OFFSET(display_disable), OPTION_INT(0, 0, 1) },
+    { "volume",                         "set startup volume 0=min 100=max",
+        OPTION_OFFSET(startup_volume),   OPTION_INT(100, 0, 100) },
     // FFP_MERGE: f, pix_fmt, stats
     { "fast",                           "non spec compliant optimizations",
         OPTION_OFFSET(fast),            OPTION_INT(0, 0, 1) },
@@ -149,6 +151,8 @@ static const AVOption ffp_context_options[] = {
 
     { "enable-accurate-seek",                      "enable accurate seek",
         OPTION_OFFSET(enable_accurate_seek),       OPTION_INT(0, 0, 1) },
+    { "skip-calc-frame-rate",                      "don't calculate real frame rate",
+        OPTION_OFFSET(skip_calc_frame_rate),       OPTION_INT(0, 0, 1) },
 
         // iOS only options
     { "videotoolbox",                       "VideoToolbox: enable",
@@ -183,6 +187,8 @@ static const AVOption ffp_context_options[] = {
         OPTION_OFFSET(opensles),            OPTION_INT(0, 0, 1) },
     { "soundtouch",                           "SoundTouch: enable",
         OPTION_OFFSET(soundtouch_enable),            OPTION_INT(0, 0, 1) },
+    { "mediacodec-sync",                 "mediacodec: use msg_queue for synchronise",
+        OPTION_OFFSET(mediacodec_sync),           OPTION_INT(0, 0, 1) },
 
     { NULL }
 };
