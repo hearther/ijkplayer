@@ -60,19 +60,20 @@ FF_BUILD_ROOT=`pwd`
 FF_TAGET_OS="darwin"
 
 
-# openssl build params
+# x264 build params
 export COMMON_FF_CFG_FLAGS=
 
-OPENSSL_CFG_FLAGS=
-OPENSSL_EXTRA_CFLAGS=
-OPENSSL_CFG_CPU=
+X264_CFG_FLAGS= 
+X264_CFG_FLAGS="$X264_CFG_FLAGS --enable-static --enable-pic --disable-cli"
+X264_EXTRA_CFLAGS=
+X264_CFG_CPU=
 
 # i386, x86_64
-OPENSSL_CFG_FLAGS_SIMULATOR=
+X264_CFG_FLAGS_SIMULATOR=
 
 # armv7, armv7s, arm64
-OPENSSL_CFG_FLAGS_ARM=
-OPENSSL_CFG_FLAGS_ARM="iphoneos-cross"
+X264_CFG_FLAGS_ARM=
+#X264_CFG_FLAGS_ARM="iphoneos-cross"
 
 echo "build_root: $FF_BUILD_ROOT"
 
@@ -87,34 +88,48 @@ FF_XCRUN_OSVERSION=
 FF_GASPP_EXPORT=
 FF_XCODE_BITCODE=
 
+HOST=
+EXCFLAGS= 
+ASFLAGS=
 if [ "$FF_ARCH" = "i386" ]; then
-    FF_BUILD_NAME="openssl-i386"
+    FF_BUILD_NAME="x264-i386"
     FF_XCRUN_PLATFORM="iPhoneSimulator"
     FF_XCRUN_OSVERSION="-mios-simulator-version-min=6.0"
-    OPENSSL_CFG_FLAGS="darwin-i386-cc $OPENSSL_CFG_FLAGS"
+    HOST="--host=i386-apple-darwin"
+    EXCFLAGS="-arch i386 -mios-simulator-version-min=6.0"
 elif [ "$FF_ARCH" = "x86_64" ]; then
-    FF_BUILD_NAME="openssl-x86_64"
+    FF_BUILD_NAME="x264-x86_64"
     FF_XCRUN_PLATFORM="iPhoneSimulator"
     FF_XCRUN_OSVERSION="-mios-simulator-version-min=7.0"
-    OPENSSL_CFG_FLAGS="darwin64-x86_64-cc $OPENSSL_CFG_FLAGS"
+    HOST="$HOST"
+    EXCFLAGS="-arch x86_64 -mios-simulator-version-min=7.0"
 elif [ "$FF_ARCH" = "armv7" ]; then
-    FF_BUILD_NAME="openssl-armv7"
+    FF_BUILD_NAME="x264-armv7"
     FF_XCRUN_OSVERSION="-miphoneos-version-min=6.0"
     FF_XCODE_BITCODE="-fembed-bitcode"
-    OPENSSL_CFG_FLAGS="$OPENSSL_CFG_FLAGS_ARM $OPENSSL_CFG_FLAGS"
-#    OPENSSL_CFG_CPU="--cpu=cortex-a8"
+    X264_CFG_FLAGS="$X264_CFG_FLAGS $FF_XCODE_BITCODE"
+#    X264_CFG_CPU="--cpu=cortex-a8"
+	HOST="--host=arm-apple-darwin"
+	EXCFLAGS="-arch armv7 -fembed-bitcode -mios-version-min=7.0" 
+	ASFLAGS="$EXCFLAGS"
 elif [ "$FF_ARCH" = "armv7s" ]; then
-    FF_BUILD_NAME="openssl-armv7s"
-    OPENSSL_CFG_CPU="--cpu=swift"
+    FF_BUILD_NAME="x264-armv7s"
+    X264_CFG_CPU="--cpu=swift"
     FF_XCRUN_OSVERSION="-miphoneos-version-min=6.0"
     FF_XCODE_BITCODE="-fembed-bitcode"
-    OPENSSL_CFG_FLAGS="$OPENSSL_CFG_FLAGS_ARM $OPENSSL_CFG_FLAGS"
+    X264_CFG_FLAGS="$X264_CFG_FLAGS $FF_XCODE_BITCODE"
+    HOST="--host=arm-apple-darwin"
+    EXCFLAGS="-arch armv7s -fembed-bitcode -mios-version-min=7.0"
+    ASFLAGS="$EXCFLAGS"
 elif [ "$FF_ARCH" = "arm64" ]; then
-    FF_BUILD_NAME="openssl-arm64"
+    FF_BUILD_NAME="x264-arm64"
     FF_XCRUN_OSVERSION="-miphoneos-version-min=7.0"
     FF_XCODE_BITCODE="-fembed-bitcode"
-    OPENSSL_CFG_FLAGS="$OPENSSL_CFG_FLAGS_ARM $OPENSSL_CFG_FLAGS"
+    X264_CFG_FLAGS="$X264_CFG_FLAGS $FF_XCODE_BITCODE"
     FF_GASPP_EXPORT="GASPP_FIX_XCODE5=1"
+    HOST="--host=aarch64-apple-darwin"
+    EXCFLAGS="-arch arm64 -fembed-bitcode -mios-version-min=7.0"
+    ASFLAGS="$EXCFLAGS"
 else
     echo "unknown architecture $FF_ARCH";
     exit 1
@@ -144,7 +159,8 @@ FF_XCRUN_CC="xcrun -sdk $FF_XCRUN_SDK clang"
 export CROSS_TOP="$FF_XCRUN_SDK_PLATFORM_PATH/Developer"
 export CROSS_SDK=`echo ${FF_XCRUN_SDK_PATH/#$CROSS_TOP\/SDKs\//}`
 export BUILD_TOOL="$FF_XCRUN_DEVELOPER"
-export CC="$FF_XCRUN_CC -arch $FF_ARCH $FF_XCRUN_OSVERSION"
+#export CC="$FF_XCRUN_CC -arch $FF_ARCH $FF_XCRUN_OSVERSION"
+export CC="$FF_XCRUN_CC"
 
 echo "build_source: $FF_BUILD_SOURCE"
 echo "build_prefix: $FF_BUILD_PREFIX"
@@ -155,29 +171,42 @@ echo "CC: $CC"
 
 #--------------------
 echo "\n--------------------"
-echo "[*] configurate openssl"
+echo "[*] configurate x264"
 echo "--------------------"
 
-OPENSSL_CFG_FLAGS="$OPENSSL_CFG_FLAGS $FF_XCODE_BITCODE"
-OPENSSL_CFG_FLAGS="$OPENSSL_CFG_FLAGS --openssldir=$FF_BUILD_PREFIX"
+
+#X264_CFG_FLAGS="$X264_CFG_FLAGS $FF_XCODE_BITCODE"
+#X264_CFG_FLAGS="$X264_CFG_FLAGS --openssldir=$FF_BUILD_PREFIX"
 
 # xcode configuration
 export DEBUG_INFORMATION_FORMAT=dwarf-with-dsym
 
 cd $FF_BUILD_SOURCE
-if [ -f "./Makefile" ]; then
-    echo 'reuse configure'
-else
-    echo "config: $OPENSSL_CFG_FLAGS"
-    ./Configure \
-        $OPENSSL_CFG_FLAGS
-    make clean
-fi
+#echo "config: $X264_CFG_FLAGS"
+#echo $CC $FF_BUILD_SOURCE/configure  \
+#			$X264_CFG_FLAGS  \
+#			$HOST \
+#		    --extra-cflags="$EXCFLAGS" \
+#		    --extra-asflags="$ASFLAGS" \
+#		    --extra-ldflags="$EXCFLAGS" \
+#		    --prefix="$FF_BUILD_PREFIX"
+
+ 		  
+CC=$CC $FF_BUILD_SOURCE/configure  \
+			$X264_CFG_FLAGS  \
+			$HOST \
+		    --extra-cflags="$EXCFLAGS" \
+		    --extra-asflags="$ASFLAGS" \
+		    --extra-ldflags="$EXCFLAGS" \
+		    --prefix="$FF_BUILD_PREFIX" || exit 1			
+			
+make clean
+
 
 #--------------------
 echo "\n--------------------"
-echo "[*] compile openssl"
+echo "[*] compile x264"
 echo "--------------------"
 set +e
 make
-make install_sw
+make install
