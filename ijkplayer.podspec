@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'ijkplayer'
-  s.version          = '0.1.0'
+  s.version          = '0.7.9'
   s.summary          = 'A short description of ijkplayer.'
 
 # This description is used to generate tags and improve search results.
@@ -30,7 +30,7 @@ TODO: Add long description of the pod here.
   s.requires_arc = 'ios/IJKMediaPlayer/IJKMediaPlayer/*'  
    
   s.source_files = 'ios/IJKMediaPlayer/IJKMediaPlayer/**/*.{h,m,c,pch}', 'ijkmedia/**/*.{h,m,c,pch}'
-  s.exclude_files = 'ijkmedia/ijkj4a/**/*', 'ijkmedia/ijkplayer/android/**/*', 'ijkmedia/ijkplayer/Android.mk', 'ijkmedia/ijksdl/android/**/*', 'ijkmedia/ijksdl/Android.mk'
+  s.exclude_files = 'ijkmedia/ijkj4a/**/*', 'ijkmedia/ijkplayer/android/**/*', 'ijkmedia/ijkplayer/Android.mk', 'ijkmedia/ijkplayer/ijkioandroidio.c', 'ijkmedia/ijksdl/android/**/*', 'ijkmedia/ijksdl/Android.mk'
   s.public_header_files = 'ios/IJKMediaPlayer/IJKMediaPlayer/*.h'
 
 
