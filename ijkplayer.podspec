@@ -31,23 +31,23 @@ TODO: Add long description of the pod here.
    
   s.source_files = 'ios/IJKMediaPlayer/IJKMediaPlayer/**/*.{h,m,c,pch}', 'ijkmedia/**/*.{h,m,c,pch}'
   s.exclude_files = 'ijkmedia/ijkj4a/**/*', 'ijkmedia/ijkplayer/android/**/*', 'ijkmedia/ijkplayer/Android.mk', 'ijkmedia/ijkplayer/ijkavformat/ijkioandroidio.c', 'ijkmedia/ijksdl/android/**/*', 'ijkmedia/ijksdl/Android.mk'
-  s.public_header_files = 'ios/IJKMediaPlayer/IJKMediaPlayer/*.h'
-
+  s.public_header_files = 'ios/IJKMediaPlayer/IJKMediaPlayer/*.h', 'ijkmedia/ijkplayer/ijkavutil/ijkutils.h'
+  #s.header_mappings_dir = 'ios/IJKMediaPlayer/IJKMediaPlayer/' 
 
   s.xcconfig = { 'OTHER_LDFLAGS' => '-read_only_relocs suppress',
-		#'USER_HEADER_SEARCH_PATHS' => '"$(PODS_ROOT)/ijkplayer/ijkmedia"/** "$(PODS_ROOT)/ijkplayer/ios/build/universal/include"/**', 
+		#'USER_HEADER_SEARCH_PATHS' => '"/Users/bunny/Maktar/ijkplayer/ijkmedia"/** "/Users/bunny/Maktar/ijkplayer/ios/IJKMediaPlayer/IJKMediaPlayer/ijkmedia"/**', 
 		'USER_HEADER_SEARCH_PATHS' => '"$(PODS_ROOT)/ijkplayer/ijkmedia"/** "$(PODS_ROOT)/ijkplayer/ios/IJKMediaPlayer/IJKMediaPlayer/ijkmedia"/**',
 		'ALWAYS_SEARCH_USER_PATHS' => 'YES'
     }
     
-  s.default_subspec = 'precompiled'
-  s.subspec 'precompiled' do |ss|
-	  	ss.source_files = 'ios/build/universal/**/*'
-    	ss.public_header_files = 'ios/build/universal/include/**/*.h'
-    	ss.header_mappings_dir = 'ios/build/universal/include'
-    	ss.vendored_libraries  = 'ios/build/universal/lib/*.a'
-    	ss.libraries = 'x264', 'avcodec', 'avfilter', 'avformat', 'avutil', 'swresample', 'swscale', 'iconv', 'z', 'bz2', 'fdk_aac'
-    	ss.frameworks = 'VideoToolbox'
-  end
+  s.dependency 'ijkplayerPrecompiled'
+#  s.subspec 'precompiled' do |ss|
+#	  	ss.source_files = 'ios/build/universal/**/*'
+#    	ss.public_header_files = 'ios/build/universal/include/**/*.h'
+#    	ss.header_mappings_dir = 'ios/build/universal/include'
+#    	ss.vendored_libraries  = 'ios/build/universal/lib/*.a'
+#    	ss.libraries = 'x264', 'avcodec', 'avfilter', 'avformat', 'avutil', 'swresample', 'swscale', 'iconv', 'z', 'bz2', 'fdk_aac'
+#    	ss.frameworks = 'VideoToolbox'
+#  end
     
 end
