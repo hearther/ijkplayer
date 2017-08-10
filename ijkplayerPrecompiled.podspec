@@ -25,7 +25,7 @@ TODO: Add long description of the pod here.
   s.author           = { 'Bunny' => 'hearther.lin@gmail.com' }
   s.requires_arc = false
   s.ios.deployment_target = '8.0'        
-  s.source = { :type => "zip", :http => 'https://github.com/hearther/ijkplayer/releases/download/ff3.2--ijk0.7.6--20170324--001_Dev1/universal.zip', :flatten => true }  
+  s.source = { :type => "zip", :http => 'https://github.com/hearther/ijkplayer/releases/download/ff3.2--ijk0.7.6--20170324--001_Dev2/universal.zip', :flatten => true }  
   #s.source = { :type => "zip", :http => 'http://localhost/universal.zip', :flatten => true }  
   s.source_files = 'universal/**/*'
   s.public_header_files = 'universal/include/**/*.h'
