@@ -3278,6 +3278,7 @@ static int read_thread(void *arg)
             int pb_eof = 0;
             int pb_error = 0;
             if ((ret == AVERROR_EOF || avio_feof(ic->pb)) && !is->eof) {
+                ffp_check_buffering_l(ffp);
                 pb_eof = 1;
                 // check error later
             }
@@ -3366,7 +3367,7 @@ static int read_thread(void *arg)
 
         if (ffp->packet_buffering) {
             io_tick_counter = SDL_GetTickHR();
-            if (!ffp->first_video_frame_rendered) {
+            if ((!ffp->first_video_frame_rendered && is->video_st) || (!ffp->first_audio_frame_rendered && is->audio_st)) {
                 if (abs((int)(io_tick_counter - prev_io_tick_counter)) > FAST_BUFFERING_CHECK_PER_MILLISECONDS) {
                     prev_io_tick_counter = io_tick_counter;
                     ffp_check_buffering_l(ffp);
