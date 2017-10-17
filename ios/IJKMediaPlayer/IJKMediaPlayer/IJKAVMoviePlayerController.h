@@ -69,9 +69,14 @@
  */
 
 #import "IJKMediaPlayback.h"
-
+#if __has_feature(modules)
+@import Photos;
+#else
+#import <Photos/Photos.h>
+#endif
 @interface IJKAVMoviePlayerController : NSObject <IJKMediaPlayback>
 
+- (id)initWithAVPlayerItem:(AVPlayerItem *)item;
 - (id)initWithContentURL:(NSURL *)aUrl;
 - (id)initWithContentURLString:(NSString *)aUrl;
 + (id)getInstance:(NSString *)aUrl;

@@ -10,8 +10,8 @@
 #import "IJKSDLHudViewCell.h"
 
 @interface HudViewCellData : NSObject
-@property(nonatomic) NSString *key;
-@property(nonatomic) NSString *value;
+@property(nonatomic, strong) NSString *key;
+@property(nonatomic, strong) NSString *value;
 @end
 
 @implementation HudViewCellData
