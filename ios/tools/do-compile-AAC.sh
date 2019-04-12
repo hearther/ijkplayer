@@ -101,7 +101,7 @@ elif [ "$FF_ARCH" = "x86_64" ]; then
     FF_BUILD_NAME="AAC-x86_64"
     FF_XCRUN_PLATFORM="iPhoneSimulator"
     FF_XCRUN_OSVERSION="-mios-simulator-version-min=7.0"
-    HOST="$HOST"
+    HOST="--host=x86_64-apple-darwin"
     EXCFLAGS="-arch x86_64 -mios-simulator-version-min=7.0"
 elif [ "$FF_ARCH" = "armv7" ]; then
     FF_BUILD_NAME="AAC-armv7"
