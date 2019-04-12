@@ -84,6 +84,16 @@ void ijkav_register_all(void)
     IJK_REGISTER_PROTOCOL(ijktcphook);
     IJK_REGISTER_PROTOCOL(ijkhttphook);
     IJK_REGISTER_PROTOCOL(ijksegment);
+    IJK_REGISTER_PROTOCOL(mkhook1);
+    IJK_REGISTER_PROTOCOL(mkhook2);
+    IJK_REGISTER_PROTOCOL(mkhook3);
+    IJK_REGISTER_PROTOCOL(mkhook4);
+    IJK_REGISTER_PROTOCOL(mkhook5);
+    IJK_REGISTER_PROTOCOL(mkhook6);
+    IJK_REGISTER_PROTOCOL(mkhook7);
+    IJK_REGISTER_PROTOCOL(mkhook8);
+    IJK_REGISTER_PROTOCOL(mkhook9);
+	IJK_REGISTER_PROTOCOL(mkhook10);
     /* demuxers */
     IJK_REGISTER_DEMUXER(ijklivehook);
     av_log(NULL, AV_LOG_INFO, "===== custom modules end =====\n");
