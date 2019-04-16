@@ -2975,7 +2975,7 @@ static int stream_component_open(FFPlayer *ffp, int stream_index)
             if(is->video_st->avg_frame_rate.den && is->video_st->avg_frame_rate.num) {
                 double fps = av_q2d(is->video_st->avg_frame_rate);
                 SDL_ProfilerReset(&is->viddec.decode_profiler, fps + 0.5);
-                if (fps > ffp->max_fps && fps < 130.0) {
+                if (fps > ffp->max_fps && fps < 240.0) {
                     is->is_video_high_fps = 1;
                     av_log(ffp, AV_LOG_WARNING, "fps: %lf (too high)\n", fps);
                 } else {
@@ -2984,7 +2984,7 @@ static int stream_component_open(FFPlayer *ffp, int stream_index)
             }
             if(is->video_st->r_frame_rate.den && is->video_st->r_frame_rate.num) {
                 double tbr = av_q2d(is->video_st->r_frame_rate);
-                if (tbr > ffp->max_fps && tbr < 130.0) {
+                if (tbr > ffp->max_fps && tbr < 240.0) {
                     is->is_video_high_fps = 1;
                     av_log(ffp, AV_LOG_WARNING, "fps: %lf (too high)\n", tbr);
                 } else {
@@ -3213,31 +3213,32 @@ static int read_thread(void *arg)
     av_dump_format(ic, 0, is->filename, 0);
 
     int video_stream_count = 0;
-    int h264_stream_count = 0;
-    int first_h264_stream = -1;
+    int highQ_stream_count = 0;
+    int first_highQ_stream = -1;
     for (i = 0; i < ic->nb_streams; i++) {
         AVStream *st = ic->streams[i];
-        enum AVMediaType type = st->codecpar->codec_type;
+        enum FFMpegAVMediaType type = st->codecpar->codec_type;
         st->discard = AVDISCARD_ALL;
         if (type >= 0 && ffp->wanted_stream_spec[type] && st_index[type] == -1)
             if (avformat_match_stream_specifier(ic, st, ffp->wanted_stream_spec[type]) > 0)
                 st_index[type] = i;
 
-        // choose first h264
+        // choose first h264/h265
 
         if (type == AVMEDIA_TYPE_VIDEO) {
             enum AVCodecID codec_id = st->codecpar->codec_id;
             video_stream_count++;
-            if (codec_id == AV_CODEC_ID_H264) {
-                h264_stream_count++;
-                if (first_h264_stream < 0)
-                    first_h264_stream = i;
+            if (codec_id == AV_CODEC_ID_H264 ||
+                codec_id == AV_CODEC_ID_HEVC) {
+                highQ_stream_count++;
+                if (first_highQ_stream < 0)
+                    first_highQ_stream = i;
             }
         }
     }
     if (video_stream_count > 1 && st_index[AVMEDIA_TYPE_VIDEO] < 0) {
-        st_index[AVMEDIA_TYPE_VIDEO] = first_h264_stream;
-        av_log(NULL, AV_LOG_WARNING, "multiple video stream found, prefer first h264 stream: %d\n", first_h264_stream);
+        st_index[AVMEDIA_TYPE_VIDEO] = first_highQ_stream;
+        av_log(NULL, AV_LOG_WARNING, "multiple video stream found, prefer first h264 stream: %d\n", first_highQ_stream);
     }
     if (!ffp->video_disable)
         st_index[AVMEDIA_TYPE_VIDEO] =
@@ -3319,6 +3320,19 @@ static int read_thread(void *arg)
 
     if (ffp->infinite_buffer < 0 && is->realtime)
         ffp->infinite_buffer = 1;
+
+    
+    // find the first attached picture, if available
+    for (int i = 0; i < ic->nb_streams; i++)
+    {
+        if (ic->streams[i]->disposition & AV_DISPOSITION_ATTACHED_PIC)
+        {
+            AVPacket pkt = ic->streams[i]->attached_pic;
+            ffp_notify_msg4(ffp, FFP_MSG_ARTWORK, pkt.size, 0, pkt.data, pkt.size);
+            break;
+        }
+    }
+    
 
     if (!ffp->render_wait_start && !ffp->start_on_prepared)
         toggle_pause(ffp, 1);

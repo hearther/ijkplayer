@@ -15,7 +15,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
+export ANDROID_NDK="/Users/bunny/android-ndk-r14b"
+export ANDROID_SDK="/Users/bunny/android-ndk-r14b"
 if [ -z "$ANDROID_NDK" -o -z "$ANDROID_NDK" ]; then
     echo "You must define ANDROID_NDK, ANDROID_SDK before starting."
     echo "They must point to your NDK and SDK directories.\n"

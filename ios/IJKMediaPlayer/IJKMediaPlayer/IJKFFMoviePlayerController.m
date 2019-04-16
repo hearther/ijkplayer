@@ -34,7 +34,7 @@
 #import "ijkioapplication.h"
 #include "string.h"
 
-static const char *kIJKFFRequiredFFmpegVersion = "ff3.4--ijk0.8.7--20180103--001";
+static const char *kIJKFFRequiredFFmpegVersion = "13f6ffc47e419c880645f13952a57cc3034e5f08";
 
 // It means you didn't call shutdown if you found this object leaked.
 @interface IJKWeakHolder : NSObject
@@ -161,7 +161,7 @@ void IJKFFIOStatCompleteRegister(void (*cb)(const char *url,
 
     // Detect if URL is file path and return proper string for it
     NSString *aUrlString = [aUrl isFileURL] ? [aUrl path] : [aUrl absoluteString];
-
+    aUrlString = [aUrlString stringByRemovingPercentEncoding];
     return [self initWithContentURLString:aUrlString
                               withOptions:options];
 }
@@ -1012,13 +1012,15 @@ inline static void fillMetaInternal(NSMutableDictionary *meta, IjkMediaMeta *raw
         [meta removeObjectForKey:key];
     }
 }
-
+#define DEGREES_TO_RADIANS(x) (M_PI * (x) / 180.0)
 - (void)postEvent: (IJKFFMoviePlayerMessage *)msg
 {
     if (!msg)
         return;
 
     AVMessage *avmsg = &msg->_msg;
+    float degree = 0;
+    CGRect newGlFrame = CGRectZero;
     switch (avmsg->what) {
         case FFP_MSG_FLUSH:
             break;
@@ -1319,6 +1321,51 @@ inline static void fillMetaInternal(NSMutableDictionary *meta, IjkMediaMeta *raw
             _isAudioSync = 0;
             break;
         }
+        case FFP_MSG_VIDEO_ROTATION_CHANGED:
+        {            
+            degree = avmsg->arg1;
+            NSLog(@"FFP_MSG_VIDEO_ROTATION_CHANGED: degree %f\n", degree);
+            if (degree == 0||
+                degree == 180||
+                degree == 360)
+            {
+                newGlFrame = CGRectMake(0, 0,
+                                        CGRectGetWidth(_view.frame),
+                                        CGRectGetHeight(_view.frame));
+            }
+            else if(degree == 90||
+                    degree == 270)
+            {
+                newGlFrame = CGRectMake(0, 0,
+                                        CGRectGetHeight(_view.frame),
+                                        CGRectGetWidth(_view.frame));
+            }
+            else {
+                NSLog(@"unspported degree");
+            }
+            if (!CGRectIsNull(newGlFrame))
+            {
+                _glView.bounds = newGlFrame;
+                _glView.transform = CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(degree));
+                
+            }
+            
+            break;
+        }
+            
+        case FFP_MSG_ARTWORK:{
+            NSLog(@"FFP_MSG_ARTWORK:\n");
+            
+            NSData *data = [NSData dataWithBytes:avmsg->obj
+                                          length:avmsg->arg1];
+            UIImage *tmp = [UIImage imageWithData:data];
+            
+            [[NSNotificationCenter defaultCenter]
+             postNotificationName:IJKMPMoviePlayerArtworkKey
+             object:self userInfo:@{@"artwork":tmp}];
+            break;
+        }
+            break;
         default:
             // NSLog(@"unknown FFP_MSG_xxx(%d)\n", avmsg->what);
             break;

@@ -85,6 +85,7 @@ FFMPEG_CFG_FLAGS_SIMULATOR="$FFMPEG_CFG_FLAGS_SIMULATOR --assert-level=2"
 FFMPEG_CFG_FLAGS_ARM=
 FFMPEG_CFG_FLAGS_ARM="$FFMPEG_CFG_FLAGS_ARM --enable-pic"
 FFMPEG_CFG_FLAGS_ARM="$FFMPEG_CFG_FLAGS_ARM --enable-neon"
+FFMPEG_CFG_FLAGS_ARM="$FFMPEG_CFG_FLAGS_ARM --disable-asm"
 case "$FF_BUILD_OPT" in
     debug)
         FFMPEG_CFG_FLAGS_ARM="$FFMPEG_CFG_FLAGS_ARM --disable-optimizations"
@@ -125,33 +126,43 @@ FF_XCODE_BITCODE=
 if [ "$FF_ARCH" = "i386" ]; then
     FF_BUILD_NAME="ffmpeg-i386"
     FF_BUILD_NAME_OPENSSL=openssl-i386
+    FF_BUILD_NAME_X264=x264-i386
+    FF_BUILD_NAME_FDK_AAC=AAC-i386
     FF_XCRUN_PLATFORM="iPhoneSimulator"
-    FF_XCRUN_OSVERSION="-mios-simulator-version-min=6.0"
+    FF_XCRUN_OSVERSION="-mios-simulator-version-min=8.0"
     FFMPEG_CFG_FLAGS="$FFMPEG_CFG_FLAGS $FFMPEG_CFG_FLAGS_SIMULATOR"
 elif [ "$FF_ARCH" = "x86_64" ]; then
     FF_BUILD_NAME="ffmpeg-x86_64"
     FF_BUILD_NAME_OPENSSL=openssl-x86_64
+    FF_BUILD_NAME_X264=x264-x86_64
+    FF_BUILD_NAME_FDK_AAC=AAC-x86_64
     FF_XCRUN_PLATFORM="iPhoneSimulator"
-    FF_XCRUN_OSVERSION="-mios-simulator-version-min=7.0"
+    FF_XCRUN_OSVERSION="-mios-simulator-version-min=8.0"
     FFMPEG_CFG_FLAGS="$FFMPEG_CFG_FLAGS $FFMPEG_CFG_FLAGS_SIMULATOR"
 elif [ "$FF_ARCH" = "armv7" ]; then
     FF_BUILD_NAME="ffmpeg-armv7"
     FF_BUILD_NAME_OPENSSL=openssl-armv7
-    FF_XCRUN_OSVERSION="-miphoneos-version-min=6.0"
+    FF_BUILD_NAME_X264=x264-armv7
+    FF_BUILD_NAME_FDK_AAC=AAC-armv7
+    FF_XCRUN_OSVERSION="-miphoneos-version-min=8.0"
     FF_XCODE_BITCODE="-fembed-bitcode"
     FFMPEG_CFG_FLAGS="$FFMPEG_CFG_FLAGS $FFMPEG_CFG_FLAGS_ARM"
 #    FFMPEG_CFG_CPU="--cpu=cortex-a8"
 elif [ "$FF_ARCH" = "armv7s" ]; then
     FF_BUILD_NAME="ffmpeg-armv7s"
     FF_BUILD_NAME_OPENSSL=openssl-armv7s
+    FF_BUILD_NAME_X264=x264-armv7s
+    FF_BUILD_NAME_FDK_AAC=AAC-armv7s
     FFMPEG_CFG_CPU="--cpu=swift"
-    FF_XCRUN_OSVERSION="-miphoneos-version-min=6.0"
+    FF_XCRUN_OSVERSION="-miphoneos-version-min=8.0"
     FF_XCODE_BITCODE="-fembed-bitcode"
     FFMPEG_CFG_FLAGS="$FFMPEG_CFG_FLAGS $FFMPEG_CFG_FLAGS_ARM"
 elif [ "$FF_ARCH" = "arm64" ]; then
     FF_BUILD_NAME="ffmpeg-arm64"
     FF_BUILD_NAME_OPENSSL=openssl-arm64
-    FF_XCRUN_OSVERSION="-miphoneos-version-min=7.0"
+    FF_BUILD_NAME_X264=x264-arm64
+    FF_BUILD_NAME_FDK_AAC=AAC-arm64
+    FF_XCRUN_OSVERSION="-miphoneos-version-min=8.0"
     FF_XCODE_BITCODE="-fembed-bitcode"
     FFMPEG_CFG_FLAGS="$FFMPEG_CFG_FLAGS $FFMPEG_CFG_FLAGS_ARM"
     FF_GASPP_EXPORT="GASPP_FIX_XCODE5=1"
@@ -209,6 +220,52 @@ if [ -f "${FFMPEG_DEP_OPENSSL_LIB}/libssl.a" ]; then
 
     FFMPEG_CFLAGS="$FFMPEG_CFLAGS -I${FFMPEG_DEP_OPENSSL_INC}"
     FFMPEG_DEP_LIBS="$FFMPEG_CFLAGS -L${FFMPEG_DEP_OPENSSL_LIB} -lssl -lcrypto"
+fi
+
+#--------------------
+echo "\n--------------------"
+echo "[*] check x264"
+echo "----------------------"
+FFMPEG_DEP_X264_INC=$FF_BUILD_ROOT/build/$FF_BUILD_NAME_X264/output/include
+FFMPEG_DEP_X264_LIB=$FF_BUILD_ROOT/build/$FF_BUILD_NAME_X264/output/lib
+#--------------------
+# with x264
+if [ -f "${FFMPEG_DEP_X264_LIB}/libx264.a" ]; then
+    FFMPEG_CFG_FLAGS="$FFMPEG_CFG_FLAGS --enable-gpl --enable-libx264 --enable-encoder=libx264"
+
+    FFMPEG_CFLAGS="$FFMPEG_CFLAGS -I${FFMPEG_DEP_X264_INC}"
+    FFMPEG_DEP_LIBS="$FFMPEG_DEP_LIBS -L${FFMPEG_DEP_X264_LIB} -lx264"
+fi
+
+#--------------------
+echo "\n--------------------"
+echo "[*] check fdk aac"
+echo "----------------------"
+FFMPEG_DEP_AAC_INC=$FF_BUILD_ROOT/build/$FF_BUILD_NAME_AAC/output/include
+FFMPEG_DEP_AAC_LIB=$FF_BUILD_ROOT/build/$FF_BUILD_NAME_AAC/output/lib
+#--------------------
+# with fdk aac
+if [ -f "${FFMPEG_DEP_AAC_LIB}/libfdk-aac.a" ]; then
+    FFMPEG_CFG_FLAGS="$FFMPEG_CFG_FLAGS --enable-libfdk-aac --enable-nonfree"
+
+    FFMPEG_CFLAGS="$FFMPEG_CFLAGS -I${FFMPEG_DEP_AAC_INC}"
+    FFMPEG_DEP_LIBS="$FFMPEG_DEP_LIBS -L${FFMPEG_DEP_AAC_LIB} -lfdk-aac"
+fi
+
+#--------------------
+echo "\n--------------------"
+echo "[*] check x265"
+echo "----------------------"
+FFMPEG_DEP_X265_INC=$FF_BUILD_ROOT/build/x265/include
+FFMPEG_DEP_X265_LIB=$FF_BUILD_ROOT/build/x265/lib
+#--------------------
+# with x265
+if [ -f "${FFMPEG_DEP_X265_LIB}/libx265.a" ]; then
+    FFMPEG_CFG_FLAGS="$FFMPEG_CFG_FLAGS --enable-gpl --enable-libx265 --enable-encoder=libx265"
+
+    FFMPEG_CFLAGS="$FFMPEG_CFLAGS -I${FFMPEG_DEP_X265_INC}"    
+    FFMPEG_DEP_LIBS="$FFMPEG_DEP_LIBS -L${FFMPEG_DEP_X265_LIB} -lx265 -lz -lc++"
+    echo $FFMPEG_CFLAGS
 fi
 
 #--------------------

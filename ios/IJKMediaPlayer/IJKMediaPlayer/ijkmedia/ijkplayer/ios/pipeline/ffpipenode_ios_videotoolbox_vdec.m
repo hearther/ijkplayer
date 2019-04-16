@@ -47,6 +47,8 @@ int videotoolbox_video_thread(void *arg)
     VideoState *is = ffp->is;
     Decoder   *d = &is->viddec;
     int ret = 0;
+    
+    ffp_notify_msg2(ffp, FFP_MSG_VIDEO_ROTATION_CHANGED, ffp_get_video_rotate_degrees(ffp));
 
     for (;;) {
 
@@ -113,13 +115,13 @@ IJKFF_Pipenode *ffpipenode_create_video_decoder_from_ios_videotoolbox(FFPlayer *
     switch (opaque->avctx->codec_id) {
     case AV_CODEC_ID_H264:
     case AV_CODEC_ID_HEVC:
-        if (ffp->vtb_async)
-            opaque->context = Ijk_VideoToolbox_Async_Create(ffp, opaque->avctx);
-        else
-            opaque->context = Ijk_VideoToolbox_Sync_Create(ffp, opaque->avctx);
+            if (ffp->vtb_async)
+                opaque->context = Ijk_VideoToolbox_Async_Create(ffp, opaque->avctx);
+            else
+                opaque->context = Ijk_VideoToolbox_Sync_Create(ffp, opaque->avctx);
         break;
     default:
-        ALOGI("Videotoolbox-pipeline:open_video_decoder: not H264 or H265\n");
+        ALOGI("Videotoolbox-pipeline:open_video_decoder: %d not H264\n", opaque->avctx->codec_id);
         goto fail;
     }
     if (opaque->context == NULL) {

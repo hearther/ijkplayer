@@ -165,7 +165,14 @@ static void *KVO_AVPlayerItem_playbackBufferEmpty       = &KVO_AVPlayerItem_play
 @synthesize isDanmakuMediaAirPlay       = _isDanmakuMediaAirPlay;
 
 static IJKAVMoviePlayerController* instance;
-
+- (id)initWithAVPlayerItem:(AVPlayerItem *)item
+{
+    self = [self initWithContentURL:nil];
+    if (self != nil) {
+        _playerItem = item;
+    }
+    return self;
+}
 - (id)initWithContentURL:(NSURL *)aUrl
 {
     self = [super init];
@@ -244,6 +251,7 @@ static IJKAVMoviePlayerController* instance;
 
 - (void)prepareToPlay
 {
+    if (_playUrl){
     AVURLAsset *asset = [AVURLAsset URLAssetWithURL:_playUrl options:nil];
     NSArray *requestedKeys = @[@"playable"];
     
@@ -259,6 +267,15 @@ static IJKAVMoviePlayerController* instance;
                                  [self setPlaybackVolume:_playbackVolume];
                              });
                          }];
+}
+    else if (_playerItem){
+        dispatch_async( dispatch_get_main_queue(), ^{
+            [self didPrepareToPlayItem];
+            [[NSNotificationCenter defaultCenter]
+             postNotificationName:IJKMPMovieNaturalSizeAvailableNotification
+             object:self];
+        });
+    }
 }
 
 - (void)play
@@ -476,6 +493,106 @@ static IJKAVMoviePlayerController* instance;
 -(float)playbackVolume
 {
     return _playbackVolume;
+}
+
+- (void)didPrepareToPlayItem
+{
+    if (_isShutdown)
+        return;
+    
+    /* At this point we're ready to set up for playback of the asset. */
+    
+    /* Stop observing our prior AVPlayerItem, if we have one. */
+    [_playerItemKVO safelyRemoveAllObservers];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:nil
+                                                  object:_playerItem];
+    
+    /* Create a new instance of AVPlayerItem from the now successfully loaded AVAsset. */
+    _playerItem.audioTimePitchAlgorithm = AVAudioTimePitchAlgorithmVarispeed;
+    _playerItemKVO = [[IJKKVOController alloc] initWithTarget:_playerItem];
+    [self registerApplicationObservers];
+    /* Observe the player item "status" key to determine when it is ready to play. */
+    [_playerItemKVO safelyAddObserver:self
+                           forKeyPath:@"status"
+                              options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
+                              context:KVO_AVPlayerItem_state];
+    
+    [_playerItemKVO safelyAddObserver:self
+                           forKeyPath:@"loadedTimeRanges"
+                              options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
+                              context:KVO_AVPlayerItem_loadedTimeRanges];
+    
+    [_playerItemKVO safelyAddObserver:self
+                           forKeyPath:@"playbackLikelyToKeepUp"
+                              options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
+                              context:KVO_AVPlayerItem_playbackLikelyToKeepUp];
+    
+    [_playerItemKVO safelyAddObserver:self
+                           forKeyPath:@"playbackBufferEmpty"
+                              options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
+                              context:KVO_AVPlayerItem_playbackBufferEmpty];
+    
+    [_playerItemKVO safelyAddObserver:self
+                           forKeyPath:@"playbackBufferFull"
+                              options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
+                              context:KVO_AVPlayerItem_playbackBufferFull];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(playerItemDidReachEnd:)
+                                                 name:AVPlayerItemDidPlayToEndTimeNotification
+                                               object:_playerItem];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(playerItemFailedToPlayToEndTime:)
+                                                 name:AVPlayerItemFailedToPlayToEndTimeNotification
+                                               object:_playerItem];
+    
+    _isCompleted = NO;
+    
+    /* Create new player, if we don't already have one. */
+    if (!_player)
+    {
+        /* Get a new AVPlayer initialized to play the specified player item. */
+        _player = [AVPlayer playerWithPlayerItem:_playerItem];
+        _playerKVO = [[IJKKVOController alloc] initWithTarget:_player];
+        
+        /* Observe the AVPlayer "currentItem" property to find out when any
+         AVPlayer replaceCurrentItemWithPlayerItem: replacement will/did
+         occur.*/
+        [_playerKVO safelyAddObserver:self
+                           forKeyPath:@"currentItem"
+                              options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
+                              context:KVO_AVPlayer_currentItem];
+        
+        /* Observe the AVPlayer "rate" property to update the scrubber control. */
+        [_playerKVO safelyAddObserver:self
+                           forKeyPath:@"rate"
+                              options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
+                              context:KVO_AVPlayer_rate];
+        
+        [_playerKVO safelyAddObserver:self
+                           forKeyPath:@"airPlayVideoActive"
+                              options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
+                              context:KVO_AVPlayer_airplay];
+    }
+    
+    /* Make our new AVPlayerItem the AVPlayer's current item. */
+    if (_player.currentItem != _playerItem)
+    {
+        /* Replace the player item with a new player item. The item replacement occurs
+         asynchronously; observe the currentItem property to find out when the
+         replacement will/did occur
+         
+         If needed, configure player item here (example: adding outputs, setting text style rules,
+         selecting media options) before associating it with a player
+         */
+        [_player replaceCurrentItemWithPlayerItem:_playerItem];
+        
+        // TODO: notify state change
+    }
+    
+    // TODO: set time to 0;
 }
 
 - (void)didPrepareToPlayAsset:(AVURLAsset *)asset withKeys:(NSArray *)requestedKeys
