@@ -25,13 +25,13 @@ TODO: Add long description of the pod here.
   s.author           = { 'Bunny' => 'hearther.lin@gmail.com' }
   s.requires_arc = false
   s.ios.deployment_target = '8.0'       
-  s.source = { :type => "zip", :http => 'https://github.com/hearther/ijkplayer/releases/download/ff3.4--ijk0.8.7--20180103--002Dev/universal.zip', :flatten => true }  
+  s.source = { :type => "zip", :http => 'https://github.com/hearther/ijkplayer/releases/download/ff3.4--ijk0.8.8/universal.zip', :flatten => true }  
   #s.source = { :type => "zip", :http => 'http://localhost/universal.zip', :flatten => true }  
   s.source_files = 'universal/**/*'
   s.public_header_files = 'universal/include/**/*.h'
   s.header_mappings_dir = 'universal/include'
   s.vendored_libraries  = 'universal/lib/**/*.a'
-  s.libraries = 'x264', 'avcodec', 'avfilter', 'avformat', 'avutil', 'swresample', 'swscale', 'iconv', 'z', 'bz2', 'fdk_aac'
+  s.libraries = 'x264', 'avcodec', 'avfilter', 'avformat', 'avutil', 'swresample', 'swscale', 'iconv', 'z', 'bz2', 'fdk-aac'
   s.frameworks = 'VideoToolbox', 'Foundation'
   s.xcconfig = { 
   'OTHER_LDFLAGS' => '-read_only_relocs suppress',
