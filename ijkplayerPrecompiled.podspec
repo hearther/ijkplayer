@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'ijkplayerPrecompiled'
-  s.version          = '3.4'
+  s.version          = '3.4.1'
   s.summary          = 'A short description of ijkplayer.'
 
 # This description is used to generate tags and improve search results.
@@ -25,7 +25,7 @@ TODO: Add long description of the pod here.
   s.author           = { 'Bunny' => 'hearther.lin@gmail.com' }
   s.requires_arc = false
   s.ios.deployment_target = '8.0'       
-  s.source = { :type => "zip", :http => 'https://github.com/hearther/ijkplayer/releases/download/ff3.4--ijk0.8.8Dev01/universal.zip', :flatten => true }  
+  s.source = { :type => "zip", :http => 'https://github.com/hearther/ijkplayer/releases/download/ff3.4--ijk0.8.8Dev02/universal.zip', :flatten => true }  
   #s.source = { :type => "zip", :http => 'http://localhost/universal.zip', :flatten => true }  
   s.source_files = 'universal/**/*'
   s.public_header_files = 'universal/include/**/*.h'
