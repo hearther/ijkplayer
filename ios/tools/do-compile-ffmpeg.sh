@@ -215,12 +215,12 @@ FFMPEG_DEP_OPENSSL_INC=$FF_BUILD_ROOT/build/$FF_BUILD_NAME_OPENSSL/output/includ
 FFMPEG_DEP_OPENSSL_LIB=$FF_BUILD_ROOT/build/$FF_BUILD_NAME_OPENSSL/output/lib
 #--------------------
 # with openssl
-if [ -f "${FFMPEG_DEP_OPENSSL_LIB}/libssl.a" ]; then
-    FFMPEG_CFG_FLAGS="$FFMPEG_CFG_FLAGS --enable-openssl"
+#if [ -f "${FFMPEG_DEP_OPENSSL_LIB}/libssl.a" ]; then
+#    FFMPEG_CFG_FLAGS="$FFMPEG_CFG_FLAGS --enable-openssl"
 
-    FFMPEG_CFLAGS="$FFMPEG_CFLAGS -I${FFMPEG_DEP_OPENSSL_INC}"
-    FFMPEG_DEP_LIBS="$FFMPEG_CFLAGS -L${FFMPEG_DEP_OPENSSL_LIB} -lssl -lcrypto"
-fi
+#    FFMPEG_CFLAGS="$FFMPEG_CFLAGS -I${FFMPEG_DEP_OPENSSL_INC}"
+#    FFMPEG_DEP_LIBS="$FFMPEG_CFLAGS -L${FFMPEG_DEP_OPENSSL_LIB} -lssl -lcrypto"
+#fi
 
 #--------------------
 echo "\n--------------------"
@@ -260,13 +260,13 @@ FFMPEG_DEP_X265_INC=$FF_BUILD_ROOT/build/x265/include
 FFMPEG_DEP_X265_LIB=$FF_BUILD_ROOT/build/x265/lib
 #--------------------
 # with x265
-if [ -f "${FFMPEG_DEP_X265_LIB}/libx265.a" ]; then
-    FFMPEG_CFG_FLAGS="$FFMPEG_CFG_FLAGS --enable-gpl --enable-libx265 --enable-encoder=libx265"
+#if [ -f "${FFMPEG_DEP_X265_LIB}/libx265.a" ]; then
+#    FFMPEG_CFG_FLAGS="$FFMPEG_CFG_FLAGS --enable-gpl --enable-libx265 --enable-encoder=libx265"
 
-    FFMPEG_CFLAGS="$FFMPEG_CFLAGS -I${FFMPEG_DEP_X265_INC}"    
-    FFMPEG_DEP_LIBS="$FFMPEG_DEP_LIBS -L${FFMPEG_DEP_X265_LIB} -lx265 -lz -lc++"
-    echo $FFMPEG_CFLAGS
-fi
+#    FFMPEG_CFLAGS="$FFMPEG_CFLAGS -I${FFMPEG_DEP_X265_INC}"    
+#    FFMPEG_DEP_LIBS="$FFMPEG_DEP_LIBS -L${FFMPEG_DEP_X265_LIB} -lx265 -lz -lc++"
+#    echo $FFMPEG_CFLAGS
+#fi
 
 #--------------------
 echo "\n--------------------"
