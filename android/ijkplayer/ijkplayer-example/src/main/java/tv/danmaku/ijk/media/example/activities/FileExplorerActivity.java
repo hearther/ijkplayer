@@ -20,6 +20,7 @@ package tv.danmaku.ijk.media.example.activities;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.os.Environment;
 import android.text.TextUtils;
 
 import com.squareup.otto.Subscribe;
@@ -45,10 +46,11 @@ public class FileExplorerActivity extends AppActivity {
         }
 
         String lastDirectory = mSettings.getLastDirectory();
+        String dlpath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
         if (!TextUtils.isEmpty(lastDirectory) && new File(lastDirectory).isDirectory())
-            doOpenDirectory(lastDirectory, false);
+            doOpenDirectory(dlpath, false);
         else
-            doOpenDirectory("/", false);
+            doOpenDirectory(dlpath, false);
     }
 
     @Override
