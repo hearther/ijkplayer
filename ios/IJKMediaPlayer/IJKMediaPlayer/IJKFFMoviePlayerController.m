@@ -34,7 +34,7 @@
 #import "ijkioapplication.h"
 #include "string.h"
 
-static const char *kIJKFFRequiredFFmpegVersion = "ff3.4--ijk0.8.7--20180103--001Tag";
+static const char *kIJKFFRequiredFFmpegVersion = "ff3.4--ijk0.8.7--20230606";
 
 // It means you didn't call shutdown if you found this object leaked.
 @interface IJKWeakHolder : NSObject
@@ -1357,10 +1357,10 @@ inline static void fillMetaInternal(NSMutableDictionary *meta, IjkMediaMeta *raw
             // 2 h mirror
             if (mirror == 1) {
                 //mirror v -1, 1
-                _glView.transform = CGAffineTransformScale(_glView.transform, -1, 1);
+                _glView.transform = CGAffineTransformScale(_glView.transform, 1, -1);
             }
             else if (mirror == 2){
-                _glView.transform = CGAffineTransformScale(_glView.transform, 1, -1);
+                _glView.transform = CGAffineTransformScale(_glView.transform, -1, 1);
             }
             
             break;
