@@ -2201,7 +2201,9 @@ static int ffplay_video_thread(void *arg)
     }
 
 #else
-    ffp_notify_msg2(ffp, FFP_MSG_VIDEO_ROTATION_CHANGED, ffp_get_video_rotate_degrees(ffp));
+    int mirror = ffp_get_video_mirror(ffp);
+    
+    ffp_notify_msg3(ffp, FFP_MSG_VIDEO_ROTATION_CHANGED, ffp_get_video_rotate_degrees(ffp), mirror);
 #endif
 
     if (!frame) {
@@ -4834,7 +4836,41 @@ int ffp_get_video_rotate_degrees(FFPlayer *ffp)
 
     return theta;
 }
+// 0 no mirror
+// 1 v mirror
+// 2 h mirror
+int ffp_get_video_mirror(FFPlayer *ffp)
+{
+    VideoState *is = ffp->is;
+    AVStream *st = is->video_st;
+    AVDictionaryEntry *qk_video_ori = av_dict_get(st->metadata, "video-orientation", NULL, 1);
 
+    if (qk_video_ori && *qk_video_ori->value){
+        //    1 = Horizontal (normal)
+        //    2 = Mirror horizontal
+        //    3 = Rotate 180
+        //    4 = Mirror vertical
+        //    5 = Mirror horizontal and rotate 270 CW
+        //    6 = Rotate 90 CW
+        //    7 = Mirror horizontal and rotate 90 CW
+        //    8 = Rotate 270 CW
+        av_log(NULL, AV_LOG_ERROR, "qk_video_orientation_value %s.\n", qk_video_ori->value);
+        
+        if (strcmp(qk_video_ori->value, "2") ||
+            strcmp(qk_video_ori->value, "5") ||
+            strcmp(qk_video_ori->value, "7"))
+        {
+            return 2;
+        }
+        else if (strcmp(qk_video_ori->value, "4")){
+            return 1;
+        }
+        
+    }
+    
+    return 0;
+}
+            
 int ffp_set_stream_selected(FFPlayer *ffp, int stream, int selected)
 {
     VideoState        *is = ffp->is;

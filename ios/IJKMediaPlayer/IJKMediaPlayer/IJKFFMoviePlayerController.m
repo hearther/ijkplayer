@@ -240,7 +240,7 @@ void IJKFFIOStatCompleteRegister(void (*cb)(const char *url,
         ijkmp_ios_set_glview(_mediaPlayer, _glView);
         ijkmp_set_option(_mediaPlayer, IJKMP_OPT_CATEGORY_PLAYER, "overlay-format", "fcc-_es2");
 #ifdef DEBUG
-        [IJKFFMoviePlayerController setLogLevel:k_IJK_LOG_DEBUG];
+        [IJKFFMoviePlayerController setLogLevel:k_IJK_LOG_VERBOSE];
 #else
         [IJKFFMoviePlayerController setLogLevel:k_IJK_LOG_SILENT];
 #endif
@@ -343,7 +343,7 @@ void IJKFFIOStatCompleteRegister(void (*cb)(const char *url,
 
         ijkmp_set_option(_mediaPlayer, IJKMP_OPT_CATEGORY_PLAYER, "overlay-format", "fcc-_es2");
 #ifdef DEBUG
-        [IJKFFMoviePlayerController setLogLevel:k_IJK_LOG_DEBUG];
+        [IJKFFMoviePlayerController setLogLevel:k_IJK_LOG_VERBOSE];
 #else
         [IJKFFMoviePlayerController setLogLevel:k_IJK_LOG_SILENT];
 #endif
@@ -1020,6 +1020,7 @@ inline static void fillMetaInternal(NSMutableDictionary *meta, IjkMediaMeta *raw
 
     AVMessage *avmsg = &msg->_msg;
     float degree = 0;
+    int mirror = 0;
     CGRect newGlFrame = CGRectZero;
     switch (avmsg->what) {
         case FFP_MSG_FLUSH:
@@ -1324,7 +1325,8 @@ inline static void fillMetaInternal(NSMutableDictionary *meta, IjkMediaMeta *raw
         case FFP_MSG_VIDEO_ROTATION_CHANGED:
         {            
             degree = avmsg->arg1;
-            NSLog(@"FFP_MSG_VIDEO_ROTATION_CHANGED: degree %f\n", degree);
+            mirror = avmsg->arg2;
+//            NSLog(@"FFP_MSG_VIDEO_ROTATION_CHANGED: degree %f\n", degree);
             if (degree == 0||
                 degree == 180||
                 degree == 360)
@@ -1341,7 +1343,7 @@ inline static void fillMetaInternal(NSMutableDictionary *meta, IjkMediaMeta *raw
                                         CGRectGetWidth(_view.frame));
             }
             else {
-                NSLog(@"unspported degree");
+//                NSLog(@"unspported degree");
             }
             if (!CGRectIsNull(newGlFrame))
             {
@@ -1350,9 +1352,19 @@ inline static void fillMetaInternal(NSMutableDictionary *meta, IjkMediaMeta *raw
                 
             }
             
-            break;
-        }
+            // 0 no mirror
+            // 1 v mirror
+            // 2 h mirror
+            if (mirror == 1) {
+                //mirror v -1, 1
+                _glView.transform = CGAffineTransformScale(_glView.transform, -1, 1);
+            }
+            else if (mirror == 2){
+                _glView.transform = CGAffineTransformScale(_glView.transform, 1, -1);
+            }
             
+            break;
+        }          
         case FFP_MSG_ARTWORK:{
             NSLog(@"FFP_MSG_ARTWORK:\n");
             

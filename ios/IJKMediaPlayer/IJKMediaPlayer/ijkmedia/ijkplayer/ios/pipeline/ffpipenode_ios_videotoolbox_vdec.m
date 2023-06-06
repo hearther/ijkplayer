@@ -48,7 +48,10 @@ int videotoolbox_video_thread(void *arg)
     Decoder   *d = &is->viddec;
     int ret = 0;
     
-    ffp_notify_msg2(ffp, FFP_MSG_VIDEO_ROTATION_CHANGED, ffp_get_video_rotate_degrees(ffp));
+    int mirror = ffp_get_video_mirror(ffp);
+    
+    ffp_notify_msg3(ffp, FFP_MSG_VIDEO_ROTATION_CHANGED, ffp_get_video_rotate_degrees(ffp), mirror);
+    
 
     for (;;) {
 
