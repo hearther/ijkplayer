@@ -1356,7 +1356,7 @@ inline static void fillMetaInternal(NSMutableDictionary *meta, IjkMediaMeta *raw
             // 1 v mirror
             // 2 h mirror
             if (mirror == 1) {
-                //mirror v -1, 1
+                //mirror v 1, -1
                 _glView.transform = CGAffineTransformScale(_glView.transform, 1, -1);
             }
             else if (mirror == 2){
