@@ -4845,7 +4845,7 @@ int ffp_get_video_mirror(FFPlayer *ffp)
     AVStream *st = is->video_st;
     AVDictionaryEntry *qk_video_ori = av_dict_get(st->metadata, "video-orientation", NULL, 1);
 
-    if (qk_video_ori && *qk_video_ori->value){
+    if (qk_video_ori){
         //    1 = Horizontal (normal)
         //    2 = Mirror horizontal
         //    3 = Rotate 180
@@ -4855,14 +4855,13 @@ int ffp_get_video_mirror(FFPlayer *ffp)
         //    7 = Mirror horizontal and rotate 90 CW
         //    8 = Rotate 270 CW
         av_log(NULL, AV_LOG_ERROR, "qk_video_orientation_value %s.\n", qk_video_ori->value);
+        int val = atoi((char *)qk_video_ori->value);
         
-        if (strcmp(qk_video_ori->value, "2") ||
-            strcmp(qk_video_ori->value, "5") ||
-            strcmp(qk_video_ori->value, "7"))
+        if (val == 2 || val == 5 || val == 7)
         {
             return 2;
         }
-        else if (strcmp(qk_video_ori->value, "4")){
+        else if (val == 4){
             return 1;
         }
         
