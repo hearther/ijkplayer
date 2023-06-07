@@ -49,8 +49,11 @@ int videotoolbox_video_thread(void *arg)
     int ret = 0;
     
     int mirror = ffp_get_video_mirror(ffp);
+    int degree = ffp_get_video_rotate_degrees(ffp);
     
-    ffp_notify_msg3(ffp, FFP_MSG_VIDEO_ROTATION_CHANGED, ffp_get_video_rotate_degrees(ffp), mirror);
+    ffp_notify_msg3(ffp, FFP_MSG_VIDEO_ROTATION_CHANGED, degree, mirror);
+    
+    av_log(NULL, AV_LOG_DEBUG, "ffp_get_video_rotate_degrees %d qk_video_orientation_value %d.\n", degree, mirror);
     
 
     for (;;) {

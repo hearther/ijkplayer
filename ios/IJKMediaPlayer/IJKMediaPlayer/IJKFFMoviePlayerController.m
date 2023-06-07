@@ -1020,7 +1020,8 @@ inline static void fillMetaInternal(NSMutableDictionary *meta, IjkMediaMeta *raw
 
     AVMessage *avmsg = &msg->_msg;
     float degree = 0;
-    int mirror = 0;
+    int videoOri = 0;
+    CGAffineTransform transform = CGAffineTransformIdentity;
     CGRect newGlFrame = CGRectZero;
     switch (avmsg->what) {
         case FFP_MSG_FLUSH:
@@ -1325,44 +1326,57 @@ inline static void fillMetaInternal(NSMutableDictionary *meta, IjkMediaMeta *raw
         case FFP_MSG_VIDEO_ROTATION_CHANGED:
         {            
             degree = avmsg->arg1;
-            mirror = avmsg->arg2;
-//            NSLog(@"FFP_MSG_VIDEO_ROTATION_CHANGED: degree %f\n", degree);
-            if (degree == 0||
-                degree == 180||
-                degree == 360)
-            {
-                newGlFrame = CGRectMake(0, 0,
-                                        CGRectGetWidth(_view.frame),
-                                        CGRectGetHeight(_view.frame));
-            }
-            else if(degree == 90||
-                    degree == 270)
-            {
-                newGlFrame = CGRectMake(0, 0,
-                                        CGRectGetHeight(_view.frame),
-                                        CGRectGetWidth(_view.frame));
-            }
-            else {
-//                NSLog(@"unspported degree");
-            }
-            if (!CGRectIsNull(newGlFrame))
-            {
-                _glView.bounds = newGlFrame;
-                _glView.transform = CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(degree));
-                
-            }
+            videoOri = avmsg->arg2;
             
-            // 0 no mirror
-            // 1 v mirror
-            // 2 h mirror
-            if (mirror == 1) {
+            //    1 = Horizontal (normal)
+            //    2 = Mirror horizontal
+            //    3 = Rotate 180
+            //    4 = Mirror vertical
+            //    5 = Mirror horizontal and rotate 270 CW
+            //    6 = Rotate 90 CW
+            //    7 = Mirror horizontal and rotate 90 CW
+            //    8 = Rotate 270 CW
+                                    
+            if (videoOri == 2 ) {
+                transform = CGAffineTransformScale(transform, -1, 1);
+            }
+            else if (videoOri == 4){
                 //mirror v 1, -1
-                _glView.transform = CGAffineTransformScale(_glView.transform, 1, -1);
+                transform = CGAffineTransformScale(transform, 1, -1);
             }
-            else if (mirror == 2){
-                _glView.transform = CGAffineTransformScale(_glView.transform, -1, 1);
+            else
+            {
+                if (videoOri == 5 || videoOri == 7 ) {
+                    transform = CGAffineTransformScale(transform, -1, 1);
+                }
+                
+                NSLog(@"FFP_MSG_VIDEO_ROTATION_CHANGED: degree %f qk_video_orientation_value %d\n", degree, videoOri);
+                if (degree == 0||
+                    degree == 180||
+                    degree == 360)
+                {
+                    newGlFrame = CGRectMake(0, 0,
+                                            CGRectGetWidth(_view.frame),
+                                            CGRectGetHeight(_view.frame));
+                }
+                else if(degree == 90||
+                        degree == 270)
+                {
+                    newGlFrame = CGRectMake(0, 0,
+                                            CGRectGetHeight(_view.frame),
+                                            CGRectGetWidth(_view.frame));
+                }
+                else {
+    //                NSLog(@"unspported degree");
+                }
+                if (!CGRectIsNull(newGlFrame))
+                {
+                    _glView.bounds = newGlFrame;
+                    transform = CGAffineTransformRotate(transform, DEGREES_TO_RADIANS(degree));
+                    
+                }
             }
-            
+            _glView.transform = transform;
             break;
         }          
         case FFP_MSG_ARTWORK:{

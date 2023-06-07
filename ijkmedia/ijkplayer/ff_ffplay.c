@@ -2202,8 +2202,11 @@ static int ffplay_video_thread(void *arg)
 
 #else
     int mirror = ffp_get_video_mirror(ffp);
+    int degree = ffp_get_video_rotate_degrees(ffp);
     
-    ffp_notify_msg3(ffp, FFP_MSG_VIDEO_ROTATION_CHANGED, ffp_get_video_rotate_degrees(ffp), mirror);
+    ffp_notify_msg3(ffp, FFP_MSG_VIDEO_ROTATION_CHANGED, degree, mirror);
+    
+    av_log(NULL, AV_LOG_DEBUG, "ffp_get_video_rotate_degrees %d qk_video_orientation_value %d.\n", degree, mirror);
 #endif
 
     if (!frame) {
@@ -4846,25 +4849,9 @@ int ffp_get_video_mirror(FFPlayer *ffp)
     AVDictionaryEntry *qk_video_ori = av_dict_get(st->metadata, "video-orientation", NULL, 1);
 
     if (qk_video_ori){
-        //    1 = Horizontal (normal)
-        //    2 = Mirror horizontal
-        //    3 = Rotate 180
-        //    4 = Mirror vertical
-        //    5 = Mirror horizontal and rotate 270 CW
-        //    6 = Rotate 90 CW
-        //    7 = Mirror horizontal and rotate 90 CW
-        //    8 = Rotate 270 CW
-        av_log(NULL, AV_LOG_ERROR, "qk_video_orientation_value %s.\n", qk_video_ori->value);
+        av_log(NULL, AV_LOG_DEBUG, "qk_video_orientation_value %s.\n", qk_video_ori->value);
         int val = atoi((char *)qk_video_ori->value);
-        
-        if (val == 2 || val == 5 || val == 7)
-        {
-            return 2;
-        }
-        else if (val == 4){
-            return 1;
-        }
-        
+        return val;
     }
     
     return 0;
