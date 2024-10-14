@@ -39,7 +39,7 @@ TODO: Add long description of the pod here.
 		'USER_HEADER_SEARCH_PATHS' => '"$(PODS_ROOT)/ijkplayer/ijkmedia"/** "$(PODS_ROOT)/ijkplayer/ios/IJKMediaPlayer/IJKMediaPlayer/ijkmedia"/**',
 		'ALWAYS_SEARCH_USER_PATHS' => 'YES'
     }
-    
+  s.static_framework = true
   s.dependency 'ijkplayerPrecompiled'
 #  s.subspec 'precompiled' do |ss|
 #	  	ss.source_files = 'ios/build/universal/**/*'
