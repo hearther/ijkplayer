@@ -47,7 +47,7 @@ TODO: Add long description of the pod here.
 #    	ss.header_mappings_dir = 'ios/build/universal/include'
 #    	ss.vendored_libraries  = 'ios/build/universal/lib/*.a'
 #    	ss.libraries = 'x264', 'avcodec', 'avfilter', 'avformat', 'avutil', 'swresample', 'swscale', 'iconv', 'z', 'bz2', 'fdk_aac'
-#    	ss.frameworks = 'VideoToolbox'
+#    	ss.frameworks = 'VideoToolbox', 'CoreAudioTypes'
 #  end
     
 end
