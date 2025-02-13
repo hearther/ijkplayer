@@ -30,7 +30,7 @@ TODO: Add long description of the pod here.
   s.requires_arc = 'ios/IJKMediaPlayer/IJKMediaPlayer/*'  
    
   s.source_files = 'ios/IJKMediaPlayer/IJKMediaPlayer/**/*.{h,m,c,pch,cpp}', 'ijkmedia/ijkplayer/**/*.{h,m,c,cpp,pch}', 'ijkmedia/ijksdl/**/*.{h,m,c,cpp,pch}'
-  s.exclude_files = 'ijkmedia/ijkj4a/**/*', 'ijkmedia/ijkplayer/Android.mk', 'ijkmedia/ijkplayer/ijkavformat/ijkioandroidio.c'
+   s.exclude_files = 'ijkmedia/ijkj4a/**/*', 'ijkmedia/ijkplayer/Android.mk', 'ijkmedia/ijksdl/android/**/*', 'ijkmedia/ijksdl/ijksdl_extra_log.{c,h}', 'ijkmedia/ijkplayer/ijkavformat/ijkioandroidio.c', 'ijkmedia/ijkplayer/android/**/*'
   s.public_header_files = 'ios/IJKMediaPlayer/IJKMediaPlayer/*.h', 'ijkmedia/ijkplayer/ijkavutil/ijkutils.h'
   #s.header_mappings_dir = 'ios/IJKMediaPlayer/IJKMediaPlayer/' 
 
