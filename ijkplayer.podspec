@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'ijkplayer'
-  s.version          = '0.8.8.1'
+  s.version          = '0.8.8.3'
   s.summary          = 'A short description of ijkplayer.'
 
 # This description is used to generate tags and improve search results.
@@ -29,10 +29,9 @@ TODO: Add long description of the pod here.
   s.requires_arc = false
   s.requires_arc = 'ios/IJKMediaPlayer/IJKMediaPlayer/*'  
    
-  s.source_files = 'ios/IJKMediaPlayer/IJKMediaPlayer/**/*.{h,m,c,pch,cpp}', 'ijkmedia/ijksdl/*.{h,m,c,cpp,pch}', 'ijkmedia/**/*.{h,m,c,cpp,pch}'
-  s.exclude_files = 'ijkmedia/ijkj4a/**/*', 'ijkmedia/ijkplayer/android/**/*', 'ijkmedia/ijkplayer/Android.mk', 'ijkmedia/ijkplayer/ijkavformat/ijkioandroidio.c', 'ijkmedia/ijksdl/android/**/*', 'ijkmedia/ijksdl/Android.mk', 'ijkmedia/ijksdl/ijksdl_extra_log.c', 'ijkmedia/ijksdl/**/*', 'ijkmedia/ijksdl/ijksdl_extra_log.h', 'ijkmedia/ijksoundtouch/**/*', 'ijkmedia/ijkyuv/**/*'
+  s.source_files = 'ios/IJKMediaPlayer/IJKMediaPlayer/**/*.{h,m,c,pch,cpp}', 'ijkmedia/ijkplayer/**/*.{h,m,c,cpp,pch}', 'ijkmedia/ijksdl/**/*.{h,m,c,cpp,pch}'
+  s.exclude_files = 'ijkmedia/ijkj4a/**/*', 'ijkmedia/ijkplayer/Android.mk', 'ijkmedia/ijkplayer/ijkavformat/ijkioandroidio.c'
   s.public_header_files = 'ios/IJKMediaPlayer/IJKMediaPlayer/*.h', 'ijkmedia/ijkplayer/ijkavutil/ijkutils.h'
-  s.private_header_files = 'ijkmedia/ijkplayer/ijksdl/*.h'
   #s.header_mappings_dir = 'ios/IJKMediaPlayer/IJKMediaPlayer/' 
 
   s.xcconfig = { 'OTHER_LDFLAGS' => '-read_only_relocs suppress',
